@@ -1,13 +1,9 @@
 package kars.bot.games;
 
-import kars.bot.DiscordBot;
 import kars.bot.events.MessageHandler;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 import java.util.Random;
 
 public class RockPaperScissors {
@@ -15,8 +11,8 @@ public class RockPaperScissors {
     MessageHandler msg;
     User winner;
 
-    User user1;
-    User user2;
+    public User user1;
+    public User user2;
 
     String input;
     String input2;
@@ -24,9 +20,10 @@ public class RockPaperScissors {
     String[] options = {"Rock", "Paper", "Scissors"};
     Random cpuChoice = new Random();
 
-    boolean solo;
+    public boolean solo;
 
     public boolean awaitingInput;
+    public boolean awaitingUser;
 
     public RockPaperScissors(MessageReceivedEvent event, MessageHandler msg, boolean solo, User userCaller) {
         this.msg = msg;
@@ -37,17 +34,33 @@ public class RockPaperScissors {
         awaitingInput = true;
     }
 
-    public void giveInput(String input) {
-        if (this.input == null) {
+    public void setOpponent(User user) {
+        this.user2 = user;
+    }
+
+    public void giveInput(String input, User user) {
+        if (user == this.user1 && this.input == null) {
             this.input = input;
             if (solo) {
                 awaitingInput = false;
                 start(input, options[cpuChoice.nextInt(options.length)]);
             }
         }
-        else if (this.input2 == null && !solo) {
+
+        else if (user == this.user2 && !solo) {
             this.input2 = input;
-            awaitingInput = false;
+            if (this.input != null) {
+                awaitingInput = false;
+                start(this.input, this.input2);
+            }
+        }
+
+        else if (this.input != null && this.input2 != null) {
+            start(this.input, this.input2);
+        }
+
+        else if (user != this.user1 && user != this.user2){
+            System.err.println("User was not part of game or gave wrong input");
         }
     }
 
@@ -82,12 +95,5 @@ public class RockPaperScissors {
         msg.send(user1.getEffectiveName() + " Picked : " + input + "\n");
         msg.send(user2.getEffectiveName() + " Picked : " + input2 + "\n");
         msg.send(winner.getEffectiveName() + " has won!");
-    }
-
-    public void countdown() {
-        msg.send("3");
-        msg.send("2");
-        msg.send("1");
-        msg.send("GO");
     }
 }

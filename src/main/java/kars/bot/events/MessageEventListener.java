@@ -37,19 +37,44 @@ public class MessageEventListener extends ListenerAdapter {
             }
 
             if (msg.checkMsg("?rps")) {
-                msg.send("Give your choice (Rock, Paper, Scissors)");
+                msg.send("Ping your opponent");
                 DiscordBot.rps = new RockPaperScissors(event, msg, false, caller);
             }
 
-            if (DiscordBot.rps.awaitingInput) {
-                if (msg.checkMsg("Rock")) {
-                    DiscordBot.rps.giveInput("Rock");
-                }
-                if (msg.checkMsg("Scissors")) {
-                    DiscordBot.rps.giveInput("Scissors");
-                }
-                if (msg.checkMsg("Paper")) {
-                    DiscordBot.rps.giveInput("Paper");
+            if (msg.checkMsg("?cancel")) {
+                msg.send("Cancelling current game");
+                DiscordBot.rps = null;
+            }
+
+            if (DiscordBot.rps != null) {
+                if (DiscordBot.rps.awaitingInput) {
+                    if (!DiscordBot.rps.solo) {
+                        if (DiscordBot.rps.user2 == null) {
+                            if (event.getAuthor() == DiscordBot.rps.user1) {
+                                User pingeduser = event.getMessage().getMentions().getUsers().get(0);
+                                DiscordBot.rps.setOpponent(pingeduser);
+                                msg.send("Awaiting " + pingeduser.getEffectiveName() + "'s input");
+                            }
+                        }
+                        if (msg.checkMsg("Rock")) {
+                            DiscordBot.rps.giveInput("Rock", event.getAuthor());
+                        }
+                        if (msg.checkMsg("Scissors")) {
+                            DiscordBot.rps.giveInput("Scissors", event.getAuthor());
+                        }
+                        if (msg.checkMsg("Paper")) {
+                            DiscordBot.rps.giveInput("Paper", event.getAuthor());
+                        }
+                    }
+                    else if (msg.checkMsg("Rock")) {
+                        DiscordBot.rps.giveInput("Rock", event.getAuthor());
+                    }
+                    else if (msg.checkMsg("Scissors")) {
+                        DiscordBot.rps.giveInput("Scissors", event.getAuthor());
+                    }
+                    else if (msg.checkMsg("Paper")) {
+                        DiscordBot.rps.giveInput("Paper", event.getAuthor());
+                    }
                 }
             }
         }
