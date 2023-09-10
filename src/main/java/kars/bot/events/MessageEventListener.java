@@ -15,33 +15,35 @@ public class MessageEventListener extends ListenerAdapter {
         MessageHandler msg = new MessageHandler(event);
         User caller = event.getAuthor();
 
+        String msgContent = event.getMessage().getContentDisplay();
+
         if (event.getAuthor().isBot()) {
             return;
         }
         else {
-            if (msg.checkMsg("?help")) {
+            if (msgContent.equals("?help")) {
                 CommandsEmbed embed = new CommandsEmbed(event);
                 msg.sendEmbed(embed);
                 embed.clear();
             }
 
-            if (msg.checkMsg("?info")) {
+            if (msgContent.equals("?info")) {
                 InfoEmbed embed = new InfoEmbed();
                 msg.sendEmbed(embed);
                 embed.clear();
             }
 
-            if (msg.checkMsg("?rps solo")) {
+            if (msgContent.equals("?rps solo")) {
                 msg.send("Give your choice (Rock, Paper, Scissors)");
                 DiscordBot.rps = new RockPaperScissors(event, msg, true, caller);
             }
 
-            if (msg.checkMsg("?rps")) {
+            if (msgContent.equals("?rps")) {
                 msg.send("Ping your opponent");
                 DiscordBot.rps = new RockPaperScissors(event, msg, false, caller);
             }
 
-            if (msg.checkMsg("?cancel")) {
+            if (msgContent.equals("?cancel")) {
                 msg.send("Cancelling current game");
                 DiscordBot.rps = null;
             }
@@ -49,31 +51,20 @@ public class MessageEventListener extends ListenerAdapter {
             if (DiscordBot.rps != null) {
                 if (DiscordBot.rps.awaitingInput) {
                     if (!DiscordBot.rps.solo) {
-                        if (DiscordBot.rps.user2 == null) {
+                        if (DiscordBot.rps.awaitingUser) {
                             if (event.getAuthor() == DiscordBot.rps.user1) {
                                 User pingeduser = event.getMessage().getMentions().getUsers().get(0);
                                 DiscordBot.rps.setOpponent(pingeduser);
                                 msg.send("Awaiting " + pingeduser.getEffectiveName() + "'s input");
+                                DiscordBot.rps.awaitingUser = false;
                             }
                         }
-                        if (msg.checkMsg("Rock")) {
-                            DiscordBot.rps.giveInput("Rock", event.getAuthor());
-                        }
-                        if (msg.checkMsg("Scissors")) {
-                            DiscordBot.rps.giveInput("Scissors", event.getAuthor());
-                        }
-                        if (msg.checkMsg("Paper")) {
-                            DiscordBot.rps.giveInput("Paper", event.getAuthor());
-                        }
                     }
-                    else if (msg.checkMsg("Rock")) {
-                        DiscordBot.rps.giveInput("Rock", event.getAuthor());
-                    }
-                    else if (msg.checkMsg("Scissors")) {
-                        DiscordBot.rps.giveInput("Scissors", event.getAuthor());
-                    }
-                    else if (msg.checkMsg("Paper")) {
-                        DiscordBot.rps.giveInput("Paper", event.getAuthor());
+
+                    switch (msgContent) {
+                        case "Rock", "Paper", "Scissors" -> {
+                            DiscordBot.rps.giveInput(msgContent, event.getAuthor());
+                        }
                     }
                 }
             }

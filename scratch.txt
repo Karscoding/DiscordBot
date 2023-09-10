@@ -1,0 +1,11 @@
+Games:
+Rock paper scissors
+connect4
+Tic tac toe
+
+Commands:
+?help - shows commands
+?info  - shows info
+?cancel - cancels current game
+
+Util:

@@ -1,5 +1,6 @@
 package kars.bot.games;
 
+import kars.bot.Console;
 import kars.bot.events.MessageHandler;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -17,7 +18,7 @@ public class RockPaperScissors {
     String input;
     String input2;
 
-    String[] options = {"Rock", "Paper", "Scissors"};
+    public String[] options = {"Rock", "Paper", "Scissors"};
     Random cpuChoice = new Random();
 
     public boolean solo;
@@ -52,10 +53,12 @@ public class RockPaperScissors {
             if (this.input != null) {
                 awaitingInput = false;
                 start(this.input, this.input2);
+                System.out.println("Im here at line 55");
             }
         }
 
         else if (this.input != null && this.input2 != null) {
+            System.out.println("Im here at line 59");
             start(this.input, this.input2);
         }
 
@@ -65,6 +68,8 @@ public class RockPaperScissors {
     }
 
     public void start(String input, String input2) {
+        Console.debug("RockPaperScissors.start() called with args: " + input + ", " + input2);
+
         if (user2 == null) {
             user2 = event.getJDA().getSelfUser();
         }
