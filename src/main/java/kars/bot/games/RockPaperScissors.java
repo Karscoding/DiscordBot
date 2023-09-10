@@ -3,12 +3,13 @@ package kars.bot.games;
 import kars.bot.Console;
 import kars.bot.events.MessageHandler;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 public class RockPaperScissors {
-    MessageReceivedEvent event;
+    SlashCommandInteractionEvent event;
     MessageHandler msg;
     User winner;
 
@@ -26,13 +27,15 @@ public class RockPaperScissors {
     public boolean awaitingInput;
     public boolean awaitingUser;
 
-    public RockPaperScissors(MessageReceivedEvent event, MessageHandler msg, boolean solo, User userCaller) {
-        this.msg = msg;
+    public RockPaperScissors(SlashCommandInteractionEvent event, boolean solo, User userCaller, String input) {
         this.event = event;
         this.user1 = userCaller;
         this.solo = solo;
+        this.input = input;
 
-        awaitingInput = true;
+        if (solo) {
+            start(input, options[cpuChoice.nextInt(options.length)]);
+        }
     }
 
     public void setOpponent(User user) {
@@ -89,7 +92,7 @@ public class RockPaperScissors {
         }
 
         if (winner == null) {
-            msg.send("Tie Game!");
+            event.reply("Tie Game!").queue();
             return;
         }
 
@@ -97,8 +100,9 @@ public class RockPaperScissors {
     }
 
     public void announceWinner(@NotNull User winner, String input, String input2) {
-        msg.send(user1.getEffectiveName() + " Picked : " + input + "\n");
-        msg.send(user2.getEffectiveName() + " Picked : " + input2 + "\n");
-        msg.send(winner.getEffectiveName() + " has won!");
+        event.reply(
+                user1.getEffectiveName() + " Picked: " + input + "\n" +
+                        user2.getEffectiveName() + " Picked: " + input2 + "\n" +
+                        winner.getEffectiveName() + " Has Won!").queue();
     }
 }
