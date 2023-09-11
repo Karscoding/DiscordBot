@@ -1,19 +1,18 @@
 package kars.bot.games;
 
 import kars.bot.Console;
-import kars.bot.events.MessageHandler;
+import kars.bot.logging.LogScores;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public class RockPaperScissors {
+public class RockPaperScissors extends Game {
     SlashCommandInteractionEvent event;
     MessageReceivedEvent msgEvent;
-    MessageHandler msg;
+
     User winner;
 
     public User user1;
@@ -28,9 +27,10 @@ public class RockPaperScissors {
     Random cpuChoice = new Random();
 
     public boolean awaitingInput;
-    public boolean awaitingUser;
 
     public RockPaperScissors(SlashCommandInteractionEvent event, User userCaller, User opponent, String input) {
+        name = "RPS";
+
         this.event = event;
         this.user1 = userCaller;
         this.user2 = opponent;
@@ -38,7 +38,8 @@ public class RockPaperScissors {
 
         if (this.user2 == event.getJDA().getSelfUser()) {
             this.solo = true;
-            start(input, options[cpuChoice.nextInt(options.length)]);
+            this.input2 = options[cpuChoice.nextInt(options.length)];
+            start();
         }
         else {
             this.awaitingInput = true;
@@ -53,11 +54,11 @@ public class RockPaperScissors {
         this.input2 = input;
         if (this.input != null && this.input2 != null) {
             this.msgEvent = event;
-            start(this.input, this.input2);
+            start();
         }
     }
 
-    public void start(String input, String input2) {
+    public void start() {
         Console.debug("RockPaperScissors.start() called with args: " + input + ", " + input2);
 
         if (input.equalsIgnoreCase(input2)) {
@@ -72,7 +73,7 @@ public class RockPaperScissors {
 
         winner = checkWinner(input, input2);
 
-        announceWinner(winner, input, input2);
+        announceWinner(winner);
     }
 
     public User checkWinner(String input, String input2) {
@@ -90,7 +91,7 @@ public class RockPaperScissors {
         return null;
     }
 
-    public void announceWinner(@NotNull User winner, String input, String input2) {
+    public void announceWinner(@NotNull User winner) {
         if (this.solo) {
             event.reply(
                     user1.getEffectiveName() + " Picked: " + input + "\n" +
@@ -100,8 +101,10 @@ public class RockPaperScissors {
         else {
             msgEvent.getChannel().sendMessage(
                     user1.getEffectiveName() + " Picked: " + input + "\n" +
-                    user2.getEffectiveName() + " Picked: " + input2 + "\n" +
-                    winner.getEffectiveName() + " Has Won!").queue();
+                            user2.getEffectiveName() + " Picked: " + input2 + "\n" +
+                            winner.getEffectiveName() + " Has Won!").queue();
         }
+
+        LogScores.saveScore(winner, 1);
     }
 }
