@@ -19,29 +19,15 @@ public class MessageEventListener extends ListenerAdapter {
             return;
         }
         else {
-
-            if (msgContent.equals("?cancel")) {
+            if (msgContent.equals("cancel")) {
                 msg.send("Cancelling current game");
                 DiscordBot.rps = null;
             }
 
-            if (DiscordBot.rps != null) {
-                if (DiscordBot.rps.awaitingInput) {
-                    if (!DiscordBot.rps.solo) {
-                        if (DiscordBot.rps.awaitingUser) {
-                            if (event.getAuthor() == DiscordBot.rps.user1) {
-                                User pingeduser = event.getMessage().getMentions().getUsers().get(0);
-                                DiscordBot.rps.setOpponent(pingeduser);
-                                msg.send("Awaiting " + pingeduser.getEffectiveName() + "'s input");
-                                DiscordBot.rps.awaitingUser = false;
-                            }
-                        }
-                    }
-
-                    switch (msgContent) {
-                        case "Rock", "Paper", "Scissors" -> {
-                            DiscordBot.rps.giveInput(msgContent, event.getAuthor());
-                        }
+            if (DiscordBot.rps != null && DiscordBot.rps.awaitingInput && event.getAuthor() == DiscordBot.rps.user2) {
+                switch (msgContent) {
+                    case "Rock", "rock", "Paper", "paper", "Scissor", "scissor" -> {
+                        DiscordBot.rps.giveInput2(msgContent, event);
                     }
                 }
             }

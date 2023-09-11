@@ -35,20 +35,31 @@ public class SlashCommand extends ListenerAdapter {
             }
             case "say" -> {
                 OptionMapping msgOption = event.getOption("message");
-                String message = msgOption.getAsString();
-                event.reply(message).queue();
+                if (msgOption != null) {
+                    String message = msgOption.getAsString();
+                    event.reply(message).queue();
+                }
             }
             case "rps" -> {
                 OptionMapping rpsOption = event.getOption("choice");
+                OptionMapping oppOption = event.getOption("opponent");
+                if (rpsOption == null) {
+                    break;
+                }
+
+                if (oppOption == null) {
+                    break;
+                }
+
                 String choice = rpsOption.getAsString();
-                switch (choice) {
+
+                switch (rpsOption.getAsString()) {
                     case "Rock", "rock", "Paper", "paper", "Scissor", "scissor" -> {
-                        DiscordBot.rps = new RockPaperScissors(event, true, event.getUser(), choice);
+                        DiscordBot.rps = new RockPaperScissors(event, event.getUser(), oppOption.getAsUser(), choice);
                     }
                     default -> {
                         event.reply("Invalid choice, try again").queue();
                     }
-
                 }
             }
         }
@@ -60,20 +71,20 @@ public class SlashCommand extends ListenerAdapter {
         commandData.add(Commands.slash("hi", "Say hi"));
         commandData.add(Commands.slash("info", "Info about the bot"));
         commandData.add(Commands.slash("help", "Help information"));
-        OptionData rpsOptions = new OptionData(OptionType.STRING, "choice", "rock/paper/scissors", true, false);
-        commandData.add(Commands.slash("rps", "Rock Paper Scissors").addOptions(rpsOptions));
+
+        OptionData oppOption = new OptionData(OptionType.USER, "opponent", "pick your opponent", true, false);
+        OptionData rpsOption = new OptionData(OptionType.STRING, "choice", "rock/paper/scissors", true, false);
+        commandData.add(Commands.slash("rps", "Rock Paper Scissors").addOptions(oppOption, rpsOption));
 
         OptionData option1 = new OptionData(OptionType.STRING, "message", "fill in message", true, false);
         commandData.add(Commands.slash("say", "Say message").addOptions(option1));
+
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
 
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
-        List<CommandData> commandData = new ArrayList<>();
-        commandData.add(Commands.slash("hi", "Say hi"));
-        commandData.add(Commands.slash("info", "Info about the bot"));
-        event.getGuild().updateCommands().addCommands(commandData).queue();
+
     }
 
 }
