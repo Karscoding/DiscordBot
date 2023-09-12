@@ -1,10 +1,13 @@
 package kars.bot.events;
 
 import kars.bot.DiscordBot;
+import kars.bot.embeds.AnnounceEmbed;
 import kars.bot.embeds.HelpEmbed;
 import kars.bot.embeds.InfoEmbed;
 import kars.bot.games.RockPaperScissors;
 import kars.bot.logging.LogScores;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -17,6 +20,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.text.html.Option;
+import java.nio.channels.Channel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,15 +39,17 @@ public class SlashCommand extends ListenerAdapter {
                 HelpEmbed embed = new HelpEmbed();
                 event.replyEmbeds(embed).queue();
             }
-            case "say" -> {
-                OptionMapping msgOption = event.getOption("message");
-                if (msgOption != null) {
-                    String message = msgOption.getAsString();
-                    event.reply(message).queue();
-                }
-            }
             case "scores" -> {
                 event.reply(LogScores.readScore()).queue();
+            }
+            case "announce" -> {
+                OptionMapping announceOption = event.getOption("announcement");
+                if (announceOption != null) {
+                    String announcement = announceOption.getAsString();
+                    if (event.getMember() == event.getGuild().getOwner()) {
+                        AnnounceEmbed embed = new AnnounceEmbed(announcement);
+                    }
+                }
             }
             case "rps" -> {
                 OptionMapping rpsOption = event.getOption("choice");
@@ -81,8 +88,8 @@ public class SlashCommand extends ListenerAdapter {
         OptionData rpsOption = new OptionData(OptionType.STRING, "choice", "rock/paper/scissors", true, false);
         commandData.add(Commands.slash("rps", "Rock Paper Scissors").addOptions(oppOption, rpsOption));
 
-        OptionData option1 = new OptionData(OptionType.STRING, "message", "fill in message", true, false);
-        commandData.add(Commands.slash("say", "Say message").addOptions(option1));
+        OptionData annOption = new OptionData(OptionType.STRING, "announcement", "give announcement", true, false);
+        commandData.add(Commands.slash("announce", "announce message").addOptions(annOption));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
