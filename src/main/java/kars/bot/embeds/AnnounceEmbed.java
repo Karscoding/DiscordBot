@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public class AnnounceEmbed extends MessageEmbed {
-    public AnnounceEmbed(String message, String title) {
+    public AnnounceEmbed(String title, String message) {
         super(null,
                 title,
                 message,

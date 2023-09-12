@@ -44,12 +44,13 @@ public class SlashCommand extends ListenerAdapter {
             }
             case "announce" -> {
                 OptionMapping announceOption = event.getOption("announcement");
-                OptionMapping typOptionM = event.getOption("title");
-                if (announceOption != null && typOptionM != null) {
+                OptionMapping titleOption = event.getOption("title");
+                if (announceOption != null && titleOption != null) {
                     String announcement = announceOption.getAsString();
-                    String title = announceOption.getAsString();
+                    String title = titleOption.getAsString();
                     if (event.getMember() == event.getGuild().getOwner()) {
                         AnnounceEmbed embed = new AnnounceEmbed(title, announcement);
+                        event.replyEmbeds(embed).queue();
                     }
                 }
             }
