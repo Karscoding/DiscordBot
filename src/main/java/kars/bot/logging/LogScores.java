@@ -14,6 +14,20 @@ public class LogScores {
     static JSONParser parser = new JSONParser();
 
     @SuppressWarnings("unchecked")
+    public static void initialize() {
+        try (Reader reader = new FileReader("scores.json")) {
+            JSONObject jsonObject = (JSONObject) parser.parse(reader);
+            Set<String> keyset = jsonObject.keySet();
+            for (String key : keyset) {
+                Object value = jsonObject.get(key);
+                scores.put(key, value);
+            }
+        } catch (IOException | ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     public static void saveScore(User user, int score) {
         String username = user.getGlobalName();
         if (username == null) {
@@ -42,11 +56,7 @@ public class LogScores {
                 System.out.println("name was null");
                 return 0;
             }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
