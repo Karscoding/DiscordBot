@@ -7,9 +7,9 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public class AnnounceEmbed extends MessageEmbed {
-    public AnnounceEmbed(String message) {
+    public AnnounceEmbed(String message, String title) {
         super(null,
-                " - NEW FEATURE - ",
+                title,
                 message,
                 null,
                 null,

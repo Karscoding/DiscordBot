@@ -44,10 +44,12 @@ public class SlashCommand extends ListenerAdapter {
             }
             case "announce" -> {
                 OptionMapping announceOption = event.getOption("announcement");
-                if (announceOption != null) {
+                OptionMapping typOptionM = event.getOption("title");
+                if (announceOption != null && typOptionM != null) {
                     String announcement = announceOption.getAsString();
+                    String title = announceOption.getAsString();
                     if (event.getMember() == event.getGuild().getOwner()) {
-                        AnnounceEmbed embed = new AnnounceEmbed(announcement);
+                        AnnounceEmbed embed = new AnnounceEmbed(title, announcement);
                     }
                 }
             }
@@ -88,8 +90,9 @@ public class SlashCommand extends ListenerAdapter {
         OptionData rpsOption = new OptionData(OptionType.STRING, "choice", "rock/paper/scissors", true, false);
         commandData.add(Commands.slash("rps", "Rock Paper Scissors").addOptions(oppOption, rpsOption));
 
+        OptionData typOption = new OptionData(OptionType.STRING, "title", "title for announcement", true, false);
         OptionData annOption = new OptionData(OptionType.STRING, "announcement", "give announcement", true, false);
-        commandData.add(Commands.slash("announce", "announce message").addOptions(annOption));
+        commandData.add(Commands.slash("announce", "announce message").addOptions(typOption, annOption));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
