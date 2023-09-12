@@ -4,6 +4,7 @@ import kars.bot.DiscordBot;
 import kars.bot.embeds.HelpEmbed;
 import kars.bot.embeds.InfoEmbed;
 import kars.bot.games.RockPaperScissors;
+import kars.bot.logging.LogScores;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -40,6 +41,9 @@ public class SlashCommand extends ListenerAdapter {
                     event.reply(message).queue();
                 }
             }
+            case "scores" -> {
+                event.reply(LogScores.readScore()).queue();
+            }
             case "rps" -> {
                 OptionMapping rpsOption = event.getOption("choice");
                 OptionMapping oppOption = event.getOption("opponent");
@@ -71,6 +75,7 @@ public class SlashCommand extends ListenerAdapter {
         commandData.add(Commands.slash("hi", "Say hi"));
         commandData.add(Commands.slash("info", "Info about the bot"));
         commandData.add(Commands.slash("help", "Help information"));
+        commandData.add(Commands.slash("scores", "get scores"));
 
         OptionData oppOption = new OptionData(OptionType.USER, "opponent", "pick your opponent", true, false);
         OptionData rpsOption = new OptionData(OptionType.STRING, "choice", "rock/paper/scissors", true, false);
