@@ -1,5 +1,6 @@
 package kars.bot.events;
 
+import kars.bot.Console;
 import kars.bot.DiscordBot;
 import kars.bot.embeds.AnnounceEmbed;
 import kars.bot.embeds.HelpEmbed;
@@ -64,7 +65,7 @@ public class SlashCommand extends ListenerAdapter {
 
                 String choice = rpsOption.getAsString();
 
-                switch (rpsOption.getAsString()) {
+                switch (choice) {
                     case "Rock", "rock", "Paper", "paper", "Scissors", "scissors" -> {
                         DiscordBot.rps = new RockPaperScissors(event, event.getUser(), oppOption.getAsUser(), choice);
                     }
@@ -75,14 +76,53 @@ public class SlashCommand extends ListenerAdapter {
             }
             case "slots" -> {
                 OptionMapping betMapping = event.getOption("bet");
+                double balance;
+                try {
+                    balance = DiscordBot.balanceLogger.loadValue(event.getUser().getEffectiveName());
+                    if (balance < 5) {
+                        balance = 50;
+                    }
+                    DiscordBot.balanceLogger.saveValue(event.getUser(), balance, "slots");
+                }
+                catch (Exception e) {
+                    Console.debug("User was not found in balance.json");
+                    DiscordBot.balanceLogger.saveValue(event.getUser(), 100, "slots");
+                    balance = 100;
+                }
+                Console.debug(String.valueOf(balance));
+
                 double bet;
                 if (betMapping != null) {
                     bet = betMapping.getAsDouble();
+                    if (bet > balance) {
+                        event.reply("You don't have enough balance").queue();
+                        return;
+                    }
                 }
                 else {
                     bet = 10.0;
                 }
-                DiscordBot.slots = new Slots(event, event.getUser(),12, bet);
+                DiscordBot.slots = new Slots(event, event.getUser(), balance, bet);
+            }
+            case "balance" -> {
+                double balance;
+                try {
+                    balance = DiscordBot.balanceLogger.loadValue(event.getUser().getEffectiveName());
+                    if (balance < 5) {
+                        balance = 50;
+                    }
+                    DiscordBot.balanceLogger.saveValue(event.getUser(), balance, "slots");
+                }
+                catch (Exception e) {
+                    Console.debug("User was not found in balance.json");
+                    DiscordBot.balanceLogger.saveValue(event.getUser(), 100, "slots");
+                    balance = 100;
+                }
+                event.reply("Your balance : " + balance).queue();
+            }
+            case "balanceranking" -> {
+                ScoreEmbed embed = new ScoreEmbed(DiscordBot.balanceLogger.readAll());
+                event.replyEmbeds(embed).queue();
             }
         }
     }
@@ -93,7 +133,9 @@ public class SlashCommand extends ListenerAdapter {
         commandData.add(Commands.slash("hi", "Say hi"));
         commandData.add(Commands.slash("info", "Info about the bot"));
         commandData.add(Commands.slash("help", "Help information"));
-        commandData.add(Commands.slash("scores", "get scores"));
+        commandData.add(Commands.slash("scores", "Get scores"));
+        commandData.add(Commands.slash("balance", "Check your balance"));
+        commandData.add(Commands.slash("balanceranking", "Check everyones balance"));
 
         OptionData oppOption = new OptionData(OptionType.USER, "opponent", "pick your opponent", true, false);
         OptionData rpsOption = new OptionData(OptionType.STRING, "choice", "rock/paper/scissors", true, false);
@@ -104,7 +146,7 @@ public class SlashCommand extends ListenerAdapter {
 
         OptionData typOption = new OptionData(OptionType.STRING, "title", "title for announcement", true, false);
         OptionData annOption = new OptionData(OptionType.STRING, "announcement", "give announcement", true, false);
-        commandData.add(Commands.slash("announce", "announce message").addOptions(typOption, annOption));
+        commandData.add(Commands.slash("announce", "Announce message").addOptions(typOption, annOption));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }

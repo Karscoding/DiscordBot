@@ -106,12 +106,12 @@ public class RockPaperScissors extends Game {
         else {
             msgEvent.getChannel().sendMessage(
                     user1.getEffectiveName() + " Picked: " + input + "\n" +
-                            user2.getEffectiveName() + " Picked: " + input2 + "\n" +
-                            winner.getEffectiveName() + " Has Won!").queue();
+                        user2.getEffectiveName() + " Picked: " + input2 + "\n" +
+                        winner.getEffectiveName() + " Has Won!").queue();
         }
 
         if(user1 != user2) {
-            DiscordBot.scoresLogger.saveValue(winner, 1, this);
+            DiscordBot.scoresLogger.saveValue(winner, 1, "rps");
         }
     }
 }

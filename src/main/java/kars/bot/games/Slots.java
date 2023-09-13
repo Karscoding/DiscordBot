@@ -1,5 +1,6 @@
 package kars.bot.games;
 
+import kars.bot.DiscordBot;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -30,13 +31,14 @@ public class Slots extends Game{
 
     @Override
     public void start() {
-        random.nextDouble();
+        balance -= bet;
         int seed = random.nextInt(15);
         result = (bet * (double) seed) / 10;
         announce();
     }
 
     public void announce() {
-        event.reply(player.getEffectiveName() + " Gambled " + bet + " \nResult: " + result).queue();
+        DiscordBot.balanceLogger.saveValue(event.getUser(), result + balance, "slots");
+        event.reply(player.getEffectiveName() + " Gambled " + bet + " \nResult: " + result + "\nCurrent Balance: " + (balance + result)).queue();
     }
 }

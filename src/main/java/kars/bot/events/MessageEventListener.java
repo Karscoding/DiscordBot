@@ -10,6 +10,7 @@ public class MessageEventListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         MessageHandler msg = new MessageHandler(event);
+
         User caller = event.getAuthor();
 
         String msgContent = event.getMessage().getContentDisplay();
@@ -25,7 +26,7 @@ public class MessageEventListener extends ListenerAdapter {
 
             if (DiscordBot.rps != null && DiscordBot.rps.awaitingInput && event.getAuthor() == DiscordBot.rps.user2) {
                 switch (msgContent) {
-                    case "Rock", "rock", "Paper", "paper", "Scissor", "scissor" -> {
+                    case "Rock", "rock", "Paper", "paper", "Scissors", "scissors" -> {
                         DiscordBot.rps.giveInput2(msgContent, event);
                     }
                 }

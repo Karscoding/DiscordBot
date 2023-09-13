@@ -1,7 +1,9 @@
 package kars.bot.logging;
 
 import kars.bot.Console;
+import kars.bot.DiscordBot;
 import kars.bot.games.Game;
+import kars.bot.games.Slots;
 import net.dv8tion.jda.api.entities.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,26 +27,35 @@ public class Logger {
 
     public void initialize() {
         try (Reader reader = new FileReader(filename)) {
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
+            jsonObject = (JSONObject) jsonParser.parse(reader);
+
             Set<String> keyset = jsonObject.keySet();
             for (String key : keyset) {
                 Object value = jsonObject.get(key);
                 jsonObject.put(key, value);
             }
-        } catch (IOException | ParseException e) {
+        }
+        catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void saveValue(User user, double value, Game game) {
+    public void saveValue(User user, double value, String game) {
         String username = user.getGlobalName();
         if (username == null) {
             return;
         }
         Console.debug(username);
+
         double current = loadValue(username);
-        current++;
+        if (game.equals("slots")) {
+            current = value;
+        }
+        else {
+            current += value;
+        }
         jsonObject.put(username, current);
+
         try (FileWriter file = new FileWriter(filename)) {
             file.write(jsonObject.toJSONString());
         }
@@ -57,11 +68,12 @@ public class Logger {
         try (Reader reader = new FileReader(filename)) {
             String content = reader.toString();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
+
             if (jsonObject.get(name) != null) {
-                return (Long) jsonObject.get(name);
+                return (Double) jsonObject.get(name);
             }
             else {
-                System.out.println("name was null");
+                Console.debug("name was null");
                 return 0;
             }
         }
