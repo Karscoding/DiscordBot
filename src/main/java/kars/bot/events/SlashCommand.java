@@ -4,14 +4,13 @@ import kars.bot.DiscordBot;
 import kars.bot.embeds.AnnounceEmbed;
 import kars.bot.embeds.HelpEmbed;
 import kars.bot.embeds.InfoEmbed;
+import kars.bot.embeds.ScoreEmbed;
 import kars.bot.games.RockPaperScissors;
+import kars.bot.games.Slots;
 import kars.bot.logging.LogScores;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -20,8 +19,6 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.text.html.Option;
-import java.nio.channels.Channel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +37,8 @@ public class SlashCommand extends ListenerAdapter {
                 event.replyEmbeds(embed).queue();
             }
             case "scores" -> {
-                event.reply(LogScores.readScore()).queue();
+                ScoreEmbed embed = new ScoreEmbed(LogScores.readAll());
+                event.replyEmbeds(embed).queue();
             }
             case "announce" -> {
                 OptionMapping announceOption = event.getOption("announcement");
@@ -76,6 +74,17 @@ public class SlashCommand extends ListenerAdapter {
                     }
                 }
             }
+            case "slots" -> {
+                OptionMapping betMapping = event.getOption("bet");
+                double bet;
+                if (betMapping != null) {
+                    bet = betMapping.getAsDouble();
+                }
+                else {
+                    bet = 10.0;
+                }
+                DiscordBot.slots = new Slots(event, event.getUser(),12, bet);
+            }
         }
     }
 
@@ -91,6 +100,9 @@ public class SlashCommand extends ListenerAdapter {
         OptionData rpsOption = new OptionData(OptionType.STRING, "choice", "rock/paper/scissors", true, false);
         commandData.add(Commands.slash("rps", "Rock Paper Scissors").addOptions(oppOption, rpsOption));
 
+        OptionData betOption = new OptionData(OptionType.STRING, "bet", "type amount you want to bet", true, false);
+        commandData.add(Commands.slash("slots", "Spin a slot").addOptions(betOption));
+
         OptionData typOption = new OptionData(OptionType.STRING, "title", "title for announcement", true, false);
         OptionData annOption = new OptionData(OptionType.STRING, "announcement", "give announcement", true, false);
         commandData.add(Commands.slash("announce", "announce message").addOptions(typOption, annOption));
@@ -102,5 +114,4 @@ public class SlashCommand extends ListenerAdapter {
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
 
     }
-
 }

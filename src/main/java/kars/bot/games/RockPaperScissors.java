@@ -29,7 +29,7 @@ public class RockPaperScissors extends Game {
     public boolean awaitingInput;
 
     public RockPaperScissors(SlashCommandInteractionEvent event, User userCaller, User opponent, String input) {
-        name = "RPS";
+        setName("rps");
 
         this.event = event;
         this.user1 = userCaller;
@@ -105,6 +105,6 @@ public class RockPaperScissors extends Game {
                             winner.getEffectiveName() + " Has Won!").queue();
         }
 
-        LogScores.saveScore(winner, 1);
+        LogScores.saveValue(winner, 1);
     }
 }

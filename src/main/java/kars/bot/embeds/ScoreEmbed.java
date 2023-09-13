@@ -7,11 +7,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public class ScoreEmbed extends MessageEmbed {
-    public ScoreEmbed() {
+    public ScoreEmbed(String message) {
         super(
                 "",
-                "Scores",
-                "This bot was developed by Karscoding using Java Discord API (JDA)",
+                " - Scores - ",
+                message,
                 null,
                 null,
                 15844367,

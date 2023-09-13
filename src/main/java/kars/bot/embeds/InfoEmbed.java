@@ -8,7 +8,7 @@ public class InfoEmbed extends MessageEmbed {
         super(
                 "",
                 "Information",
-                "This bot was developed by Karscoding using Java Discord API (JDA)",
+                "This bot was developed by Karscoding using Java Discord API (JDA)\n for more information check out the github! https://github.com/Karscoding/DiscordBot",
                 null,
                 null,
                 15844367,

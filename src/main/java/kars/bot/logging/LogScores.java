@@ -1,15 +1,13 @@
 package kars.bot.logging;
-import kars.bot.DiscordBot;
 import net.dv8tion.jda.api.entities.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
-import java.util.Iterator;
 import java.util.Set;
 
-public class LogScores {
+public class LogScores implements Logging{
     static JSONObject scores = new JSONObject();
     static JSONParser parser = new JSONParser();
 
@@ -28,13 +26,13 @@ public class LogScores {
     }
 
     @SuppressWarnings("unchecked")
-    public static void saveScore(User user, int score) {
+    public static void saveValue(User user, int score) {
         String username = user.getGlobalName();
         if (username == null) {
             username = "Karscoding";
         }
         System.out.println(username);
-        long current = loadScore(username);
+        long current = loadValue(username);
         current++;
         scores.put(username, current);
         try (FileWriter file = new FileWriter("scores.json")) {
@@ -45,7 +43,7 @@ public class LogScores {
         }
     }
 
-    public static long loadScore(String name) {
+    public static long loadValue(String name) {
         try (Reader reader = new FileReader("scores.json")) {
             String content = reader.toString();
             JSONObject jsonObject = (JSONObject) parser.parse(reader);
@@ -61,7 +59,7 @@ public class LogScores {
         }
     }
 
-    public static String readScore() {
+    public static String readAll() {
         StringBuilder sb = new StringBuilder();
         try (Reader reader = new FileReader("scores.json")) {
             JSONObject jsonObject = (JSONObject) parser.parse(reader);

@@ -4,12 +4,12 @@ import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class Game {
-    public static String name;
+    private static String name;
 
     public String getName() {
         return name;
     }
+    public void setName(String name) { Game.name = name; }
 
     public abstract void start();
-    public abstract void announceWinner(@NotNull User winner);
 }
