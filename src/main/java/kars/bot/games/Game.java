@@ -1,8 +1,5 @@
 package kars.bot.games;
 
-import net.dv8tion.jda.api.entities.User;
-import org.jetbrains.annotations.NotNull;
-
 public abstract class Game {
     private static String name;
 

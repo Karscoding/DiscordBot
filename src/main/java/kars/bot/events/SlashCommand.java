@@ -7,7 +7,6 @@ import kars.bot.embeds.InfoEmbed;
 import kars.bot.embeds.ScoreEmbed;
 import kars.bot.games.RockPaperScissors;
 import kars.bot.games.Slots;
-import kars.bot.logging.LogScores;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -37,7 +36,7 @@ public class SlashCommand extends ListenerAdapter {
                 event.replyEmbeds(embed).queue();
             }
             case "scores" -> {
-                ScoreEmbed embed = new ScoreEmbed(LogScores.readAll());
+                ScoreEmbed embed = new ScoreEmbed(DiscordBot.scoresLogger.readAll());
                 event.replyEmbeds(embed).queue();
             }
             case "announce" -> {
@@ -66,7 +65,7 @@ public class SlashCommand extends ListenerAdapter {
                 String choice = rpsOption.getAsString();
 
                 switch (rpsOption.getAsString()) {
-                    case "Rock", "rock", "Paper", "paper", "Scissor", "scissor" -> {
+                    case "Rock", "rock", "Paper", "paper", "Scissors", "scissors" -> {
                         DiscordBot.rps = new RockPaperScissors(event, event.getUser(), oppOption.getAsUser(), choice);
                     }
                     default -> {

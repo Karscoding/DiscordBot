@@ -1,7 +1,6 @@
 package kars.bot.events;
 
 import kars.bot.DiscordBot;
-import kars.bot.games.RockPaperScissors;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

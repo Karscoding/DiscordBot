@@ -1,7 +1,7 @@
 package kars.bot.games;
 
 import kars.bot.Console;
-import kars.bot.logging.LogScores;
+import kars.bot.DiscordBot;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -28,7 +28,7 @@ public class RockPaperScissors extends Game {
 
     public boolean awaitingInput;
 
-    public RockPaperScissors(SlashCommandInteractionEvent event, User userCaller, User opponent, String input) {
+    public RockPaperScissors(@NotNull SlashCommandInteractionEvent event, User userCaller, User opponent, String input) {
         setName("rps");
 
         this.event = event;
@@ -43,10 +43,15 @@ public class RockPaperScissors extends Game {
         }
         else {
             this.awaitingInput = true;
-            event.reply(userCaller.getEffectiveName() + " has challenged " +
-                    opponent.getEffectiveName() + " to Rock Paper Scissors!\n" +
-                    userCaller.getEffectiveName() + " has decided his move now we wait for " +
-                    opponent.getEffectiveName() + " to make his choice!").queue();
+            if (user1 == user2) {
+                event.reply(userCaller.getEffectiveName() + " has challenged himself??, Good luck I guess....?").queue();
+            }
+            else {
+                event.reply(userCaller.getEffectiveName() + " has challenged " +
+                        opponent.getEffectiveName() + " to Rock Paper Scissors!\n" +
+                        userCaller.getEffectiveName() + " has decided his move now we wait for " +
+                        opponent.getEffectiveName() + " to make his choice!").queue();
+            }
         }
     }
 
@@ -105,6 +110,8 @@ public class RockPaperScissors extends Game {
                             winner.getEffectiveName() + " Has Won!").queue();
         }
 
-        LogScores.saveValue(winner, 1);
+        if(user1 != user2) {
+            DiscordBot.scoresLogger.saveValue(winner, 1, this);
+        }
     }
 }

@@ -1,6 +1,5 @@
 package kars.bot.embeds;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
 public class InfoEmbed extends MessageEmbed {
