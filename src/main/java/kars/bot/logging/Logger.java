@@ -1,9 +1,6 @@
 package kars.bot.logging;
 
 import kars.bot.Console;
-import kars.bot.DiscordBot;
-import kars.bot.games.Game;
-import kars.bot.games.Slots;
 import net.dv8tion.jda.api.entities.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -13,16 +10,31 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @SuppressWarnings("ALL")
 public class Logger {
     JSONObject jsonObject = new JSONObject();
     JSONParser jsonParser = new JSONParser();
+
+    String gamename;
     String filename;
 
-    public Logger(String filename) {
+    public DecimalFormat df;
+
+    public Logger(String filename, String gamename) {
+        this.gamename = gamename;
         this.filename = filename;
+
+        switch(gamename) {
+            case "rps" -> {
+                df = new DecimalFormat("0");
+            }
+            case "slots" -> {
+                df = new DecimalFormat("0.00");
+            }
+        }
     }
 
     public void initialize() {
@@ -40,7 +52,7 @@ public class Logger {
         }
     }
 
-    public void saveValue(User user, double value, String game) {
+    public void saveValue(User user, double value) {
         String username = user.getGlobalName();
         if (username == null) {
             return;
@@ -48,7 +60,7 @@ public class Logger {
         Console.debug(username);
 
         double current = loadValue(username);
-        if (game.equals("slots")) {
+        if (gamename.equals("slots")) {
             current = value;
         }
         else {
@@ -99,7 +111,7 @@ public class Logger {
             scores = sortAll(scores);
 
             for (Map.Entry<String, Double> entry : scores.entrySet()) {
-                sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");
+                sb.append(entry.getKey()).append(" : ").append(df.format(entry.getValue())).append("\n");
             }
         }
         catch (IOException ie) {

@@ -2,10 +2,7 @@ package kars.bot.events;
 
 import kars.bot.Console;
 import kars.bot.DiscordBot;
-import kars.bot.embeds.AnnounceEmbed;
-import kars.bot.embeds.HelpEmbed;
-import kars.bot.embeds.InfoEmbed;
-import kars.bot.embeds.ScoreEmbed;
+import kars.bot.embeds.*;
 import kars.bot.games.RockPaperScissors;
 import kars.bot.games.Slots;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
@@ -82,11 +79,11 @@ public class SlashCommand extends ListenerAdapter {
                     if (balance < 5) {
                         balance = 50;
                     }
-                    DiscordBot.balanceLogger.saveValue(event.getUser(), balance, "slots");
+                    DiscordBot.balanceLogger.saveValue(event.getUser(), balance);
                 }
                 catch (Exception e) {
                     Console.debug("User was not found in balance.json");
-                    DiscordBot.balanceLogger.saveValue(event.getUser(), 100, "slots");
+                    DiscordBot.balanceLogger.saveValue(event.getUser(), 100);
                     balance = 100;
                 }
                 Console.debug(String.valueOf(balance));
@@ -96,6 +93,10 @@ public class SlashCommand extends ListenerAdapter {
                     bet = betMapping.getAsDouble();
                     if (bet > balance) {
                         event.reply("You don't have enough balance").queue();
+                        return;
+                    }
+                    if (bet <= 0) {
+                        event.reply("Can't bet a negative amount or 0").queue();
                         return;
                     }
                 }
@@ -111,17 +112,21 @@ public class SlashCommand extends ListenerAdapter {
                     if (balance < 5) {
                         balance = 50;
                     }
-                    DiscordBot.balanceLogger.saveValue(event.getUser(), balance, "slots");
+                    DiscordBot.balanceLogger.saveValue(event.getUser(), balance);
                 }
                 catch (Exception e) {
                     Console.debug("User was not found in balance.json");
-                    DiscordBot.balanceLogger.saveValue(event.getUser(), 100, "slots");
+                    DiscordBot.balanceLogger.saveValue(event.getUser(), 100);
                     balance = 100;
                 }
                 event.reply("Your balance : " + balance).queue();
             }
             case "balanceranking" -> {
                 ScoreEmbed embed = new ScoreEmbed(DiscordBot.balanceLogger.readAll());
+                event.replyEmbeds(embed).queue();
+            }
+            case "slotschances" -> {
+                SlotsChancesEmbed embed = new SlotsChancesEmbed();
                 event.replyEmbeds(embed).queue();
             }
         }
@@ -136,6 +141,7 @@ public class SlashCommand extends ListenerAdapter {
         commandData.add(Commands.slash("scores", "Get scores"));
         commandData.add(Commands.slash("balance", "Check your balance"));
         commandData.add(Commands.slash("balanceranking", "Check everyones balance"));
+        commandData.add(Commands.slash("slotschances", "see slots chances"));
 
         OptionData oppOption = new OptionData(OptionType.USER, "opponent", "pick your opponent", true, false);
         OptionData rpsOption = new OptionData(OptionType.STRING, "choice", "rock/paper/scissors", true, false);

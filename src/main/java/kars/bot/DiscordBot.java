@@ -18,8 +18,8 @@ public class DiscordBot {
 
     public static void main(String[] args) {
         JDABuilder builder = JDABuilder.createDefault(Token.getToken());
-        scoresLogger = new Logger("scores.json");
-        balanceLogger = new Logger("balance.json");
+        scoresLogger = new Logger("scores.json", "rps");
+        balanceLogger = new Logger("balance.json", "slots");
         scoresLogger.initialize();
         balanceLogger.initialize();
 
