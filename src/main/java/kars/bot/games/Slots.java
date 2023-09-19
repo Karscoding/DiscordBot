@@ -20,10 +20,9 @@ public class Slots extends Game{
     Random random;
 
     public Slots(SlashCommandInteractionEvent event, User player, double balance, double bet) {
+        super(event, player);
         setName("slots");
 
-        this.event = event;
-        this.player = player;
         this.balance = balance;
         this.bet = bet;
 

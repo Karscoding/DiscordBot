@@ -10,12 +10,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 public class RockPaperScissors extends Game {
-    SlashCommandInteractionEvent event;
     MessageReceivedEvent msgEvent;
 
     User winner;
 
-    public User user1;
     public User user2;
 
     boolean solo;
@@ -23,16 +21,15 @@ public class RockPaperScissors extends Game {
     String input;
     String input2;
 
-    public String[] options = {"Rock", "Paper", "Scissors"};
+    String[] options = {"Rock", "Paper", "Scissors"};
     Random cpuChoice = new Random();
 
     public boolean awaitingInput;
 
     public RockPaperScissors(@NotNull SlashCommandInteractionEvent event, User userCaller, User opponent, String input) {
+        super(event, userCaller);
         setName("rps");
 
-        this.event = event;
-        this.user1 = userCaller;
         this.user2 = opponent;
         this.input = input;
 
