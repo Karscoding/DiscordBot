@@ -2,6 +2,7 @@ package kars.bot.events;
 
 import kars.bot.Console;
 import kars.bot.DiscordBot;
+import kars.bot.chatbot.Chat;
 import kars.bot.embeds.*;
 import kars.bot.games.RockPaperScissors;
 import kars.bot.games.Slots;
@@ -129,6 +130,17 @@ public class SlashCommand extends ListenerAdapter {
                 SlotsChancesEmbed embed = new SlotsChancesEmbed();
                 event.replyEmbeds(embed).queue();
             }
+            case "chat" -> {
+                DiscordBot.chat = new Chat(event, event.getUser());
+            }
+            case "endchat" -> {
+                if (DiscordBot.chat != null) {
+                    if (DiscordBot.chat.checkUser(event.getUser())) {
+                        DiscordBot.chat = null;
+                        event.reply("Conversation ended").queue();
+                    }
+                }
+            }
         }
     }
 
@@ -141,7 +153,9 @@ public class SlashCommand extends ListenerAdapter {
         commandData.add(Commands.slash("scores", "Get scores"));
         commandData.add(Commands.slash("balance", "Check your balance"));
         commandData.add(Commands.slash("balanceranking", "Check everyones balance"));
-        commandData.add(Commands.slash("slotschances", "see slots chances"));
+        commandData.add(Commands.slash("slotschances", "See slots chances"));
+        commandData.add(Commands.slash("chat", "Talk to the bot"));
+        commandData.add(Commands.slash("endchat", "End conversation"));
 
         OptionData oppOption = new OptionData(OptionType.USER, "opponent", "pick your opponent", true, false);
         OptionData rpsOption = new OptionData(OptionType.STRING, "choice", "rock/paper/scissors", true, false);

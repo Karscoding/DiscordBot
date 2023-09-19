@@ -14,7 +14,7 @@ public class RockPaperScissors extends Game {
 
     User winner;
 
-    public User user2;
+    User user2;
 
     boolean solo;
 
@@ -110,5 +110,9 @@ public class RockPaperScissors extends Game {
         if(user1 != user2) {
             DiscordBot.scoresLogger.saveValue(winner, 1);
         }
+    }
+
+    public boolean checkOpponent(User user) {
+        return this.user2.equals(user);
     }
 }
