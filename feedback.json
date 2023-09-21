@@ -1,0 +1,13 @@
+{
+  "Smash eva warris?": {
+    "I don't know": -3,
+    "Yes": -1,
+    "Not always": -3,
+    "Definitely, Yes": 2,
+    "Not really": -1,
+    "No.": -3
+  },
+  "?": {
+    "Definitely not": 1
+  }
+}

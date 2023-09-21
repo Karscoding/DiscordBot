@@ -28,11 +28,7 @@ public class MessageReactionAdd extends ListenerAdapter {
                     return;
                 }
             }
-            DiscordBot.chat.brain.feedback(
-                    current.getContentRaw(),
-                    DiscordBot.chat.brain.getPrompt(),
-                    positive
-            );
+            DiscordBot.chat.brain.feedback(positive);
         }
     }
 }

@@ -1,6 +1,7 @@
 package kars.bot;
 
 import kars.bot.chatbot.Chat;
+import kars.bot.chatbot.FeedbackLogger;
 import kars.bot.events.MessageEventListener;
 import kars.bot.events.MessageReactionAdd;
 import kars.bot.events.ReadyEventListener;
@@ -16,15 +17,15 @@ public class DiscordBot {
     public static Chat chat;
     public static Logger scoresLogger;
     public static Logger balanceLogger;
+    public static FeedbackLogger feedbackLogger;
     public static Slots slots;
     public static boolean debug = true;
 
     public static void main(String[] args) {
         JDABuilder builder = JDABuilder.createDefault(Token.getToken());
-        scoresLogger = new Logger("scores.json", "rps");
-        balanceLogger = new Logger("balance.json", "slots");
-        scoresLogger.initialize();
-        balanceLogger.initialize();
+        scoresLogger = Logger.initialize("scores.json", "rps");
+        balanceLogger = Logger.initialize("balance.json", "slots");
+        feedbackLogger = FeedbackLogger.initialize("feedback.json");
 
         builder
                 .addEventListeners(new ReadyEventListener(), new MessageEventListener(), new SlashCommand(), new MessageReactionAdd())

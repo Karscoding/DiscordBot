@@ -15,8 +15,8 @@ import java.util.*;
 
 @SuppressWarnings("ALL")
 public class Logger {
-    JSONObject jsonObject = new JSONObject();
-    JSONParser jsonParser = new JSONParser();
+    static JSONObject jsonObject = new JSONObject();
+    static JSONParser jsonParser = new JSONParser();
 
     String gamename;
     String filename;
@@ -37,7 +37,7 @@ public class Logger {
         }
     }
 
-    public void initialize() {
+    public static Logger initialize(String filename, String gamename) {
         try (Reader reader = new FileReader(filename)) {
             jsonObject = (JSONObject) jsonParser.parse(reader);
 
@@ -50,6 +50,8 @@ public class Logger {
         catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
+
+        return new Logger(filename, gamename);
     }
 
     public void saveValue(User user, double value) {
