@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class FeedbackLogger {
@@ -55,12 +56,8 @@ public class FeedbackLogger {
         else {
             currentScore = 0;
         }
-        if (positivity) {
-            currentScore += 1;
-        }
-        else {
-            currentScore -= 1;
-        }
+
+        currentScore = positivity ? currentScore + 1 : currentScore - 1;
 
         scoreObject.put(answer, currentScore);
         promptObject.put(prompt,scoreObject);
@@ -82,18 +79,20 @@ public class FeedbackLogger {
             String content = reader.toString();
 
             JSONObject prompts = (JSONObject) jsonParser.parse(reader);
-            if (prompts.get(prompt) != null) {
-                JSONObject answers = (JSONObject) prompts.get(prompt);
+            if (!prompts.containsKey(prompt)) {
+                scores.put("", 0L);
+                return scores;
+            }
+            JSONObject answers = (JSONObject) prompts.get(prompt);
 
-                Set<String> keyset = answers.keySet();
-                for (String key : keyset) {
-                    long value = (long) answers.get(key);
-                    scores.put(key, value);
-                }
+            Set<String> keyset = answers.keySet();
+            for (String key : keyset) {
+                long value = (long) answers.get(key);
+                scores.put(key, value);
             }
         }
 
-        catch (IOException | ParseException e) {
+        catch (NoSuchElementException | IOException | ParseException e) {
             System.err.println(e);
         }
 
